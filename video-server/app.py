@@ -1,8 +1,13 @@
 import os
 from flask import Flask, request, send_from_directory, render_template_string
+from flask_cors import CORS
+
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
+
+#Enabling CORS
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Ensure the upload folder exists
 if not os.path.exists(UPLOAD_FOLDER):
