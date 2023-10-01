@@ -35,7 +35,7 @@ def internal_server_error(error):
 
 @app.route('/upload', methods=['POST'])
 def upload_file():
-    filename = request.headers.get('X-Filename')
+    filename = request.headers.get('X-File-name')
     if not filename:
         return jsonify({'error': 'Missing filename header'}), 400
     
