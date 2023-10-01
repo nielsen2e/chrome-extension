@@ -1,6 +1,7 @@
 import os
 from flask import Flask, request, send_from_directory, jsonify, render_template_string
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'uploads'
@@ -38,16 +39,15 @@ def upload_file():
     filename = request.headers.get('X-File-name')
     if not filename:
         return jsonify({'error': 'Missing filename header'}), 400
-    
+        
+    # Sanitize the filename to contain only safe characters
+    sanitized_filename = secure_filename(filename)
     content_length = request.content_length
     if content_length > app.config['MAX_CONTENT_LENGTH']:
         return jsonify({'error': 'File size exceeds the limit'}), 413
-    
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], sanitized_filename)
     with open(file_path, 'wb') as f:
         f.write(request.get_data(cache=False))
-    
     return jsonify({'success': 'File uploaded successfully'}), 200
 
 @app.route('/videos/<filename>', methods=['GET'])
